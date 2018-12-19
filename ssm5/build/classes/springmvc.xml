@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+<!--  开启注解扫描  -->
+<context:component-scan base-package="com.shop.web"></context:component-scan>
+
+
+
+<!-- 
+  一定要将自定义转换器类挂载 annotation-driven 标签下面
+ -->
+<mvc:annotation-driven conversion-service="ConversionService"></mvc:annotation-driven>
+
+
+
+
+<!-- 放行 被SpringMVC 拦截的资源
+
+
+ location 填写要放行资源的物理路径 
+ 
+ mapping 填写访问的映射路径      
+ 
+ 
+ mapping="/js/**"  映射路径中所有子路径  （子孙级）
+ 
+ 
+   -->
+<mvc:resources location="/js/" mapping="/js/**"></mvc:resources>
+<!-- <mvc:resources location="/image/" mapping="/image/**"></mvc:resources>
+<mvc:resources location="/css/" mapping="/css/**"></mvc:resources> -->
+
+
+<!--视图解析器  -->
+ 
+<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+  <property name="prefix" value="/WEB-INF/jsp/"></property>
+  <property name="suffix" value=".jsp"></property>
+</bean>
+
+<!-- 配置自定义转换器类  -->
+<bean name="ConversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+  <property name="converters">
+    <set>
+      <bean class="com.shop.convert.CustomConvertor"></bean>
+    </set>
+  </property>
+</bean>
+
+<!--配置SPringMVC上传组件 (类) 
+
+  id 名称必须是 multipartResolver，因为Spring MVC 源码中写死了
+ -->
+<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+
+<!--maxUploadSize 单位：是以字节作为单位    5M     -->
+  <property name="maxUploadSize" value="5242880"></property>
+</bean>
+
+<!--配置SpringMVC全局异常类  -->
+<bean class="com.shop.exception.GlobalException"></bean>
+</beans>    
